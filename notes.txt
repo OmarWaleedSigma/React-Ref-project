@@ -1,0 +1,50 @@
+1=> -----------------usig state to update the name-----------------
+-we start with the state to update the name when clicking the button and this needs 2 states
+
+2=> -----------------what is refs and how to use them-----------------
+-refs are used to get access to the DOM elements as references
+-we set the ref to the element that we want to access and then we can use
+ the ref.current to access the element.
+-we could save a lot of code by using it when i click the button you take the value 
+of the input and set it to the state and after clicking the button you can empty the input
+-but we dont always do that.
+
+-we will use the ?? for outputing the state or the default value.
+
+===>deference between refs and state
+-firstly try to use the ref instead of the state to see that it don't cause rerender 
+
+-states causes component re-evaluation when changed, should be used for values that are directly reflected in the ui
+-refs dont cause component re-evaluation, should be used for elements that are not directly reflected in the ui
+
+3=> -----------------use refs deep-----------------
+-we will make a component TimerChallenge accepts title and targetTime as props
+ section className="challenge"> 
+    h2>{title}</h2>
+    p className="challenge-time">{targetTime} second{targetTime > 1 && 's'}</p>
+    p>
+      <button >Start challenge</button>
+    p>time is running.../timer inactive</p>
+  </section>  
+
+-then use it in app in a div with id="challenges"
+-we will make 4 instances with defferent props from easy to pros only from 1 s to 15 s
+-inside the timer component we will make 2 pace of states and a timer with set timer 
+-first state is false initialy and it reflect if timer started or not
+-second will tell if the timer expired or not
+-when clicking the button we will call a handler wich starts a timer with the targetTime  * 1000
+-then set the expiration state in it 
+-the start state we will set it right after the timer in the handler function 
+-we will use the expiration state to show the lose element
+-we will use the start timer state to change the ui dynamically like the button text and the
+classname for the last p with the active class conditionally and its value also and so on
+
+
+-we want to stop the timer so we will make a handler function for that but we will need a reference for
+the timer so we will try the variable and this will not work because each rerender will recreate the timer so 
+we will try to put that variable outside the component and then we will face the problem that
+this var is now for all instances so when i start a timer and start another so the first one 
+reference is thrown away from the memory and overides with the new clicked timer so it wont 
+work either so we need refs
+-we will define a ref then assign the timer to the ref.current then clear the timer with the current also 
+-becaue refs are special for each instase and also it keep the value even after the rerender
