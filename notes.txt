@@ -48,3 +48,55 @@ reference is thrown away from the memory and overides with the new clicked timer
 work either so we need refs
 -we will define a ref then assign the timer to the ref.current then clear the timer with the current also 
 -becaue refs are special for each instase and also it keep the value even after the rerender
+
+=> adding Modal component
+ResultModal accepts ({result , targetTime}) as props
+<dialog className="result-modal">
+  <h2>You {result}</h2>
+  <p>the target time is <strong>{targetTime}</strong> seconds</p>
+  <p>you stoped the timer at <strong>x seconds left </strong></p>
+  <form method="dialog">
+    <button>close</button>
+  </form>
+</dialog>
+
+-we will output it instead of the lost paragraph but it won't work because it needs the open prop
+-so we can put it but the backdrop won't work so we need to open it programmatically with refs
+-at the past we used to use forwardref but in react 19 we can pass props from parent to child as easy as it is.
+-so we make a ref in the app and pass it to the result modal and in the setTimeout callback we call the ref.current.showModal();
+-and then we can render the modal free of conditions 
+
+=> exposing component apis via useImperativeHandle
+- we go to the result then we create a new ref and pass it to the dialog ref then we use the 
+hook useImperativeHandle and we will pass the ref from props to it
+- we pass in the second parameter a function that returns an object and that opject is what the app will see when using the ref he pass to the modal
+- then we make a function in the object called open and call the ref.current.showModal();
+- out in the setTimeout now we call ref.current.open();
+
+=> how to know the remaining time
+- we will use setInterval instead of setTimeout because it will give us such information of 
+the remaining time 
+-we will change the states to one state and it is the remainingTime and the initial value
+will be the targetTime * 1000 and the setInterval will run every 10 ms 
+-in the setInterval we will set the remainingTime to the remainingTime - 10 ms
+-we will derive a boolean value witch is timerIsActive if the remainingTime >0 || remainingTime < targetTime * 1000;
+-then we use it in the conditional rendering 
+- we will check if remaining<=0 then clear the interval and reset the remaining time to the targetTime * 1000 and open the dialog
+-also in the handleStop we open the dialog after clearing the interval 
+
+=> corrent the message passed to the modal
+- we pass the remainig time instead of result to the modal 
+- then we compute userLost if remainign time is less than or equal the remaining time 
+- and make a formattedremainingtime = (remainingTime / 1000).toFixed(2)
+- it works but the time is not work correctly when it expired because we reset it in the if 
+statment in the app so we will create a function to handlereset the remaining time then pass it to the modal then pass it to the onSubmit prop to the form in the modal then it rest
+the timer when the dialog closes
+
+=> how to have a score 
+- we will make a score derived value = ((1-remainingTime/(targetTime * 1000)) * 100).round()
+- then we outputs if !userLost && h2 your score is {score}%
+
+=> portals 
+-if we inspent the dialog when it is open we see it is inside the structure of the html elements witch doesnt make sense so it should be in the top level so we need the portal feature
+- we import createPortal from react-dom so we can tell this jsx code where to be rendered 
+- then we wrapp the jsx code after the return with the createPortal then we pass as a second parameter of it the modal div by calling document.getElementById('modal') so it appears in it in the inspect 
